@@ -13,7 +13,7 @@ class PersonaRouter(Star):
         self.config = config
 
     def _get_target_persona_id(self, event: AstrMessageEvent):
-        """核心路由逻辑：完美遍历 list 列表配置，保留群聊统一会话逻辑喵！"""
+        """核心路由逻辑：精准解析 template_list 模板配置喵！"""
         try:
             # 1. 提取默认人格喵
             dp_config = self.config.get("default_persona", "YukiToOthers")
@@ -27,25 +27,25 @@ class PersonaRouter(Star):
                 gid = str(event.message_obj.group_id)
             uid = str(event.get_sender_id())
             
-            # 统一会话 ID
+            # 统一群聊会话逻辑喵
             session_id = gid if gid else uid
             target = default_id
             
-            # 2. 匹配全局规则 (遍历用户列表) 喵
+            # 2. 匹配全局规则 (遍历 template_list 列表) 喵
             gr_list = self.config.get("global_rules", [])
             if isinstance(gr_list, list):
                 for item in gr_list:
                     if isinstance(item, dict) and str(item.get("user_id", "")).strip() == session_id:
                         target = item.get("persona_id", target)
-                        break # 匹配到就立马停下来喵
+                        break
                 
-            # 3. 匹配群组规则 (遍历群列表) 喵
+            # 3. 匹配群组规则 (遍历 template_list 列表) 喵
             ggr_list = self.config.get("group_rules", [])
             if gid and isinstance(ggr_list, list):
                 for item in ggr_list:
                     if isinstance(item, dict) and str(item.get("group_id", "")).strip() == gid:
                         target = item.get("persona_id", target)
-                        break # 匹配到就立马停下来喵
+                        break
                 
             return target
         except Exception as e:

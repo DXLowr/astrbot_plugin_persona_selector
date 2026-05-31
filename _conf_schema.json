@@ -8,33 +8,45 @@
   },
   "global_rules": {
     "description": "全局用户规则 (私聊)",
-    "hint": "点击添加按钮，为特定的用户账号绑定专属人格喵",
-    "type": "list",
-    "items": {
-      "user_id": {
-        "description": "用户QQ号/唯一ID",
-        "type": "string"
+    "hint": "点击右侧按钮添加条目，为特定用户绑定人格喵",
+    "type": "template_list",
+    "templates": {
+      "user_rule": {
+        "name": "用户绑定规则",
+        "display_item": "user_id",
+        "items": {
+          "user_id": {
+            "description": "用户QQ号/唯一ID",
+            "type": "string"
           },
-      "persona_id": {
-        "description": "对应人格 ID",
-        "type": "string",
-        "_special": "select_persona"
+          "persona_id": {
+            "description": "对应人格 ID",
+            "type": "string",
+            "_special": "select_persona"
+          }
+        }
       }
     }
   },
   "group_rules": {
     "description": "群组人格规则",
-    "hint": "点击添加按钮，为特定群号绑定群内共享的人格喵",
-    "type": "list",
-    "items": {
-      "group_id": {
-        "description": "群号",
-        "type": "string"
-      },
-      "persona_id": {
-        "description": "对应人格 ID",
-        "type": "string",
-        "_special": "select_persona"
+    "hint": "点击右侧按钮添加条目，为特定群聊绑定统一共享的人格喵",
+    "type": "template_list",
+    "templates": {
+      "group_rule": {
+        "name": "群聊绑定规则",
+        "display_item": "group_id",
+        "items": {
+          "group_id": {
+            "description": "群号",
+            "type": "string"
+          },
+          "persona_id": {
+            "description": "对应人格 ID",
+            "type": "string",
+            "_special": "select_persona"
+          }
+        }
       }
     }
   }
