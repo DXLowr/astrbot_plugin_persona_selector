@@ -13,37 +13,38 @@ class PersonaRouter(Star):
         self.config = config
 
     def _get_target_persona_id(self, event: AstrMessageEvent):
-        """核心路由逻辑：精准解析 template_list 模板配置喵！"""
+        """核心路由逻辑：实现严格的优先级覆盖 (默认 -> 全局用户 -> 群组 -> 群内特定用户) 喵！"""
         try:
-            # 1. 提取默认人格喵
+            # 0. 提取默认人格 (兜底) 喵
             dp_config = self.config.get("default_persona", "YukiToOthers")
-            if isinstance(dp_config, dict):
-                default_id = dp_config.get("default", "YukiToOthers")
-            else:
-                default_id = dp_config
+            target = dp_config.get("default", "YukiToOthers") if isinstance(dp_config, dict) else dp_config
 
             gid = None
             if getattr(event, "message_obj", None) and getattr(event.message_obj, "group_id", None):
                 gid = str(event.message_obj.group_id)
             uid = str(event.get_sender_id())
             
-            # 统一群聊会话逻辑喵
-            session_id = gid if gid else uid
-            target = default_id
-            
-            # 2. 匹配全局规则 (遍历 template_list 列表) 喵
+            # 1. 匹配全局用户规则 (第二优先级) 喵
             gr_list = self.config.get("global_rules", [])
             if isinstance(gr_list, list):
                 for item in gr_list:
-                    if isinstance(item, dict) and str(item.get("user_id", "")).strip() == session_id:
+                    if isinstance(item, dict) and str(item.get("user_id", "")).strip() == uid:
                         target = item.get("persona_id", target)
                         break
                 
-            # 3. 匹配群组规则 (遍历 template_list 列表) 喵
+            # 2. 匹配群组规则 (第三优先级，如果是在群里，群规则会覆盖个人的全局规则) 喵
             ggr_list = self.config.get("group_rules", [])
             if gid and isinstance(ggr_list, list):
                 for item in ggr_list:
                     if isinstance(item, dict) and str(item.get("group_id", "")).strip() == gid:
+                        target = item.get("persona_id", target)
+                        break
+
+            # 3. 匹配群内特定用户规则 (最高优先级，精确匹配群和用户) 喵
+            gur_list = self.config.get("group_user_rules", [])
+            if gid and isinstance(gur_list, list):
+                for item in gur_list:
+                    if isinstance(item, dict) and str(item.get("group_id", "")).strip() == gid and str(item.get("user_id", "")).strip() == uid:
                         target = item.get("persona_id", target)
                         break
                 
@@ -72,7 +73,7 @@ class PersonaRouter(Star):
                 if prompt:
                     req.system_prompt = prompt
                     setattr(event, "persona_id", target_id)
-                    logger.info(f"[Router] 已为主人的请求匹配并注入人格: {target_id} 喵！")
+                    logger.info(f"[Router] 🎯 为 UID:{event.get_sender_id()} 注入人格: {target_id} 喵！")
             else:
                 logger.warning(f"[Router] 找不到 ID 为 {target_id} 的人格，请在管理面板确认喵！")
         except Exception as e:

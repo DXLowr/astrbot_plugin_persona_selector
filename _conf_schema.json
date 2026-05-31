@@ -1,18 +1,18 @@
 {
   "default_persona": {
     "description": "默认人格",
-    "hint": "当没有匹配到群组或全局规则时使用的默认人格 ID",
+    "hint": "当没有匹配到任何规则时使用的默认人格 ID",
     "type": "string",
     "default": "YukiToOthers",
     "_special": "select_persona"
   },
   "global_rules": {
-    "description": "全局用户规则 (私聊)",
-    "hint": "点击右侧按钮添加条目，为特定用户绑定人格喵",
+    "description": "全局用户规则 (按账号)",
+    "hint": "点击右侧按钮，为特定用户绑定全局专属人格 (无论私聊还是群聊均生效喵)",
     "type": "template_list",
     "templates": {
       "user_rule": {
-        "name": "用户绑定规则",
+        "name": "用户全局绑定",
         "display_item": "user_id",
         "items": {
           "user_id": {
@@ -29,12 +29,12 @@
     }
   },
   "group_rules": {
-    "description": "群组人格规则",
-    "hint": "点击右侧按钮添加条目，为特定群聊绑定统一共享的人格喵",
+    "description": "群组统一人格规则",
+    "hint": "点击右侧按钮，为特定群聊里的所有人绑定统一人格喵",
     "type": "template_list",
     "templates": {
       "group_rule": {
-        "name": "群聊绑定规则",
+        "name": "群聊统一绑定",
         "display_item": "group_id",
         "items": {
           "group_id": {
@@ -43,6 +43,32 @@
           },
           "persona_id": {
             "description": "对应人格 ID",
+            "type": "string",
+            "_special": "select_persona"
+          }
+        }
+      }
+    }
+  },
+  "group_user_rules": {
+    "description": "群内特定用户规则 (最高优先级)",
+    "hint": "点击右侧按钮，为某个群聊里的特定用户单独分配人格，覆盖上面的所有规则喵！",
+    "type": "template_list",
+    "templates": {
+      "group_user_rule": {
+        "name": "群内用户专属定制",
+        "display_item": "user_id",
+        "items": {
+          "group_id": {
+            "description": "群号",
+            "type": "string"
+          },
+          "user_id": {
+            "description": "群内用户QQ号/唯一ID",
+            "type": "string"
+          },
+          "persona_id": {
+            "description": "专属人格 ID",
             "type": "string",
             "_special": "select_persona"
           }
