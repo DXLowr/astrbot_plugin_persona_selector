@@ -8,14 +8,34 @@
   },
   "global_rules": {
     "description": "全局用户规则 (私聊)",
-    "hint": "配置格式: { 'QQ号': '人格ID' }。在 WebUI 中以 JSON 字典格式编辑喵",
-    "type": "dict",
-    "default": {}
+    "hint": "点击添加按钮，为特定的用户账号绑定专属人格喵",
+    "type": "list",
+    "items": {
+      "user_id": {
+        "description": "用户QQ号/唯一ID",
+        "type": "string"
+          },
+      "persona_id": {
+        "description": "对应人格 ID",
+        "type": "string",
+        "_special": "select_persona"
+      }
+    }
   },
   "group_rules": {
     "description": "群组人格规则",
-    "hint": "配置格式: { '群号': '人格ID' }。群内所有人都将共享该群绑定的人格喵",
-    "type": "dict",
-    "default": {}
+    "hint": "点击添加按钮，为特定群号绑定群内共享的人格喵",
+    "type": "list",
+    "items": {
+      "group_id": {
+        "description": "群号",
+        "type": "string"
+      },
+      "persona_id": {
+        "description": "对应人格 ID",
+        "type": "string",
+        "_special": "select_persona"
+      }
+    }
   }
 }
